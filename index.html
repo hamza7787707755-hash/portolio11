@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أداة Nmap - دليل شامل</title>
+    <style>
+        /* يمكنك وضع كود CSS الخاص بك هنا لتحسين المظهر */
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+        header {
+            background: #2c3e50;
+            color: #ffffff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #e8491d 3px solid;
+            text-align: center;
+        }
+        header h1 {
+            margin: 0;
+            text-transform: uppercase;
+        }
+        section {
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #e8491d;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        code {
+            background: #eee;
+            padding: 2px 4px;
+            border-radius: 4px;
+            color: #c0392b;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: right;
+        }
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .command-example {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-right: 5px solid #e8491d;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>🛡️ Nmap: أداة فحص الشبكات واستكشافها</h1>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <section id="introduction">
+            <h2>مقدمة عن أداة Nmap</h2>
+            <p><strong>Nmap</strong> (Network Mapper) هي أداة مجانية ومفتوحة المصدر تستخدم لاكتشاف الشبكات والتدقيق الأمني. يستخدمها محترفو أمن المعلومات والمسؤولون عن الشبكات لمهام مثل:</p>
+            <ul>
+                <li>اكتشاف الأجهزة المضيفة على الشبكة.</li>
+                <li>تحديد المنافذ المفتوحة والمغلقة والمفلترة.</li>
+                <li>تحديد الخدمات التي تعمل على كل منفذ (مثل HTTP، SSH).</li>
+                <li>الكشف عن نظام التشغيل (OS Detection).</li>
+                <li>فحص الثغرات باستخدام محرك البرمجة النصية لـ Nmap (<span dir="ltr">NSE</span>).</li>
+            </ul>
+        </section>
+
+        <section id="basics">
+            <h2>كيف يعمل Nmap؟</h2>
+            <p>تعتمد Nmap على إرسال حزم بيانات خام (Raw Packets) إلى الأهداف وتحليل الاستجابات. هناك العديد من تقنيات الفحص التي تستخدمها Nmap، أشهرها:</p>
+            <ul>
+                <li><strong>فحص SYN (<span dir="ltr">-sS</span>):</strong> يُعرف بـ "فحص التخفي" وهو الأسرع والأكثر شيوعًا، ولا يكمل عملية مصافحة الاتصال (<span dir="ltr">TCP Handshake</span>).</li>
+                <li><strong>فحص TCP Connect (<span dir="ltr">-sT</span>):</strong> يكمل عملية المصافحة، وهو أقل تخفياً وأكثر موثوقية في بعض البيئات.</li>
+                <li><strong>فحص UDP (<span dir="ltr">-sU</span>):</strong> لفحص منافذ بروتوكول <span dir="ltr">UDP</span>.</li>
+            </ul>
+            <p class="command-example"><strong>بنية الأمر الأساسية:</strong> <code>nmap [الخيارات] [الهدف]</code></p>
+        </section>
+
+        <section id="commands">
+            <h2>جدول أوامر Nmap الشائعة</h2>
+            <p>إليك مجموعة من الأوامر الأساسية والمتقدمة التي تستخدم بكثرة في فحص الشبكات.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>الأمر</th>
+                        <th>الوصف</th>
+                        <th>مثال الاستخدام</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>nmap [الهدف]</code></td>
+                        <td>فحص أساسي (يفحص أكثر 1000 منفذ شيوعاً).</td>
+                        <td dir="ltr"><code>nmap 192.168.1.1</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>-sS</code></td>
+                        <td>فحص التخفي <span dir="ltr">SYN</span> (الأسرع والأكثر شيوعاً).</td>
+                        <td dir="ltr"><code>nmap -sS target.com</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>-p [منافذ]</code></td>
+                        <td>فحص منافذ محددة (يمكن تحديد نطاق أو مجموعة).</td>
+                        <td dir="ltr"><code>nmap -p 21,22,80 target.com</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>-A</code></td>
+                        <td>فحص شامل ومتقدم (يكتشف نظام التشغيل والإصدارات والسكريبتات).</td>
+                        <td dir="ltr"><code>nmap -A target.com</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>-sV</code></td>
+                        <td>كشف إصدارات الخدمات (يحدد نوع واسم وإصدار الخدمة العاملة).</td>
+                        <td dir="ltr"><code>nmap -sV 192.168.1.1</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>-O</code></td>
+                        <td>الكشف عن نظام التشغيل.</td>
+                        <td dir="ltr"><code>nmap -O target.com</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>-Pn</code></td>
+                        <td>تخطي اختبار الاستكشاف (يُستخدم إذا كان الهدف لا يستجيب للبنج).</td>
+                        <td dir="ltr"><code>nmap -Pn target.com</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>--script [اسم السكريبت]</code></td>
+                        <td>تشغيل سكريبتات <span dir="ltr">NSE</span> محددة.</td>
+                        <td dir="ltr"><code>nmap --script http-enum target.com</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>-oX [ملف.xml]</code></td>
+                        <td>حفظ النتائج بصيغة <span dir="ltr">XML</span>.</td>
+                        <td dir="ltr"><code>nmap -sV -oX results.xml target.com</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="resources">
+            <h2>مزيد من المصادر</h2>
+            <p>لتعلم المزيد عن Nmap واستخداماتها، يمكنك الاطلاع على الوثائق الرسمية والمصادر التعليمية الأخرى.</p>
+        </section>
+
+    </div>
+
+</body>
+</html>
+
