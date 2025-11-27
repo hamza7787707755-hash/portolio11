@@ -3,185 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أداة Nmap - دليل شامل</title>
+    <title>Nmap - أدوات كالي لينكس المتقدمة</title>
+    
     <style>
-        /* يمكنك وضع كود CSS الخاص بك هنا لتحسين المظهر */
+        /* ========================================================= */
+        /* CSS RESET & GENERAL STYLES */
+        /* ========================================================= */
         body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
+            font-family: 'Droid Arabic Naskh', 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
+            background-color: #f8f9fa; /* خلفية أفتح */
+            color: #343a40;
+            direction: rtl; 
+            text-align: right;
+            line-height: 1.6;
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding: 20px 0;
+        
+        a {
+            text-decoration: none;
+            color: #007bff; /* لون أزرق جذاب */
         }
-        header {
-            background: #2c3e50;
-            color: #ffffff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #e8491d 3px solid;
-            text-align: center;
+        
+        a:hover {
+            color: #0056b3;
         }
-        header h1 {
-            margin: 0;
-            text-transform: uppercase;
+
+        /* ========================================================= */
+        /* LAYOUT STRUCTURE (Flexbox & Grid) */
+        /* ========================================================= */
+        .page-container {
+            display: flex;
+            min-height: 100vh;
         }
-        section {
+
+        /* الشريط الجانبي (Sidebar) */
+        .sidebar {
+            width: 280px;
+            background-color: #2c3e50; /* داكن احترافي */
+            color: white;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed; /* تثبيت القائمة */
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* المحتوى الرئيسي (Main Content) */
+        .main-content {
+            flex-grow: 1;
+            margin-right: 280px; /* لإفساح المجال للشريط الجانبي */
             padding: 20px;
-            margin-bottom: 20px;
-            background: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        h2 {
-            color: #e8491d;
-            border-bottom: 2px solid #ccc;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+
+        /* ========================================================= */
+        /* SIDEBAR STYLES */
+        /* ========================================================= */
+        .sidebar-header {
+            text-align: center;
+            padding: 10px 0 20px 0;
+            font-size: 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
         }
-        code {
-            background: #eee;
-            padding: 2px 4px;
-            border-radius: 4px;
-            color: #c0392b;
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            padding: 12px 20px;
+            color: #bdc3c7;
+            border-right: 4px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .sidebar ul li a:hover {
+            background-color: #34495e;
+            color: white;
+            border-right-color: #3498db;
+        }
+
+        /* تظليل العنصر النشط */
+        .sidebar ul li.active a {
+            background-color: #1e2a36;
+            color: #3498db; /* لون مميز للأداة الحالية */
+            border-right-color: #3498db;
             font-weight: bold;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
+
+        /* ========================================================= */
+        /* CONTENT STYLES (Header, Cards, Code) */
+        /* ========================================================= */
+        .content-header {
+            background-color: white;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
-        table, th, td {
-            border: 1px solid #ddd;
+
+        .content-header h1 {
+            color: #e74c3c; /* لون أحمر للتأكيد على الأهمية */
+            margin-bottom: 5px;
+            font-size: 32px;
         }
-        th, td {
-            padding: 12px;
-            text-align: right;
+
+        /* بطاقة المحتوى (مثل بطاقة فحص المنافذ) */
+        .tool-card {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-        th {
-            background-color: #2c3e50;
-            color: white;
+
+        .tool-card h3 {
+            color: #2980b9;
+            border-bottom: 2px solid #f1c40f; /* خط تمييز أصفر */
+            padding-bottom: 5px;
+            margin-bottom: 15px;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+
+        /* تنسيق الأوامر البرمجية */
+        .code-block {
+            background-color: #272c34; /* خلفية داكنة للأكواد */
+            color: #e9c46a; /* لون فاتح مميز للأوامر */
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 15px;
+            margin: 10px 0;
+            border-left: 5px solid #2ecc71; /* شريط أخضر لتمييز الكود */
         }
-        .command-example {
-            background-color: #ecf0f1;
-            padding: 10px;
-            border-right: 5px solid #e8491d;
-            margin-top: 10px;
+        
+        .code-block span {
+            color: #f9f9f9; /* لإظهار باقي النص بلون مختلف */
+        }
+
+
+        /* ========================================================= */
+        /* RESPONSIVENESS (للهواتف والأجهزة اللوحية) */
+        /* ========================================================= */
+        @media (max-width: 900px) {
+            .page-container {
+                flex-direction: column; /* جعل العناصر تتكدس عمودياً */
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative; /* إزالة التثبيت */
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                padding-top: 0;
+            }
+
+            .sidebar ul {
+                display: flex; /* عرض القائمة أفقياً في شريط */
+                overflow-x: auto;
+                white-space: nowrap; /* منع التفاف العناصر */
+                padding: 10px 0;
+            }
+
+            .sidebar ul li {
+                flex-shrink: 0;
+            }
+
+            .main-content {
+                margin-right: 0; /* إزالة الهامش الجانبي */
+            }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="container">
-            <h1>🛡️ Nmap: أداة فحص الشبكات واستكشافها</h1>
-        </div>
-    </header>
-
-    <div class="container">
-
-        <section id="introduction">
-            <h2>مقدمة عن أداة Nmap</h2>
-            <p><strong>Nmap</strong> (Network Mapper) هي أداة مجانية ومفتوحة المصدر تستخدم لاكتشاف الشبكات والتدقيق الأمني. يستخدمها محترفو أمن المعلومات والمسؤولون عن الشبكات لمهام مثل:</p>
+    <div class="page-container">
+        
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                دليل الأدوات الأمنية
+            </div>
             <ul>
-                <li>اكتشاف الأجهزة المضيفة على الشبكة.</li>
-                <li>تحديد المنافذ المفتوحة والمغلقة والمفلترة.</li>
-                <li>تحديد الخدمات التي تعمل على كل منفذ (مثل HTTP، SSH).</li>
-                <li>الكشف عن نظام التشغيل (OS Detection).</li>
-                <li>فحص الثغرات باستخدام محرك البرمجة النصية لـ Nmap (<span dir="ltr">NSE</span>).</li>
+                <li><a href="#metasploit">Metasploit Framework</a></li>
+                <li class="active"><a href="#nmap">Nmap</a></li> <li><a href="#hydra">Hydra</a></li>
+                <li><a href="#crunch">Crunch</a></li>
+                <li><a href="#dmitry">Dmitry</a></li>
+                <li><a href="#hashid">Hash-Identifier</a></li>
+                <li><a href="#wafw00f">Wafw00f</a></li>
+                <li><a href="#spiderfoot">SpiderFoot</a></li>
+                <li><a href="#pdfid">Pdfid</a></li>
+                <li><a href="#nikto">Nikto</a></li>
             </ul>
-        </section>
+        </aside>
 
-        <section id="basics">
-            <h2>كيف يعمل Nmap؟</h2>
-            <p>تعتمد Nmap على إرسال حزم بيانات خام (Raw Packets) إلى الأهداف وتحليل الاستجابات. هناك العديد من تقنيات الفحص التي تستخدمها Nmap، أشهرها:</p>
-            <ul>
-                <li><strong>فحص SYN (<span dir="ltr">-sS</span>):</strong> يُعرف بـ "فحص التخفي" وهو الأسرع والأكثر شيوعًا، ولا يكمل عملية مصافحة الاتصال (<span dir="ltr">TCP Handshake</span>).</li>
-                <li><strong>فحص TCP Connect (<span dir="ltr">-sT</span>):</strong> يكمل عملية المصافحة، وهو أقل تخفياً وأكثر موثوقية في بعض البيئات.</li>
-                <li><strong>فحص UDP (<span dir="ltr">-sU</span>):</strong> لفحص منافذ بروتوكول <span dir="ltr">UDP</span>.</li>
-            </ul>
-            <p class="command-example"><strong>بنية الأمر الأساسية:</strong> <code>nmap [الخيارات] [الهدف]</code></p>
-        </section>
+        <main class="main-content">
+            
+            <div class="content-header">
+                <h1>Nmap (Network Mapper)</h1>
+                <p>الأداة القياسية في الصناعة لاكتشاف الشبكات، فحص المنافذ، وتحديد الخدمات. لا غنى عنها لأي مختبر اختراق.</p>
+            </div>
+            
+            <div class="tool-card">
+                <h3>1. فحص المنافذ السريع (TCP SYN Scan)</h3>
+                <p>هو النوع الأكثر شيوعاً وسرعة. يرسل طلب SYN ولا يكمل الاتصال بالكامل (Stealth Scan).</p>
+                
+                <div class="code-block">
+                    nmap <span>-sS target_ip_or_domain</span>
+                </div>
+            </div>
 
-        <section id="commands">
-            <h2>جدول أوامر Nmap الشائعة</h2>
-            <p>إليك مجموعة من الأوامر الأساسية والمتقدمة التي تستخدم بكثرة في فحص الشبكات.</p>
-            <table>
-                <thead>
-                    <tr>
-                        <th>الأمر</th>
-                        <th>الوصف</th>
-                        <th>مثال الاستخدام</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><code>nmap [الهدف]</code></td>
-                        <td>فحص أساسي (يفحص أكثر 1000 منفذ شيوعاً).</td>
-                        <td dir="ltr"><code>nmap 192.168.1.1</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-sS</code></td>
-                        <td>فحص التخفي <span dir="ltr">SYN</span> (الأسرع والأكثر شيوعاً).</td>
-                        <td dir="ltr"><code>nmap -sS target.com</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-p [منافذ]</code></td>
-                        <td>فحص منافذ محددة (يمكن تحديد نطاق أو مجموعة).</td>
-                        <td dir="ltr"><code>nmap -p 21,22,80 target.com</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-A</code></td>
-                        <td>فحص شامل ومتقدم (يكتشف نظام التشغيل والإصدارات والسكريبتات).</td>
-                        <td dir="ltr"><code>nmap -A target.com</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-sV</code></td>
-                        <td>كشف إصدارات الخدمات (يحدد نوع واسم وإصدار الخدمة العاملة).</td>
-                        <td dir="ltr"><code>nmap -sV 192.168.1.1</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-O</code></td>
-                        <td>الكشف عن نظام التشغيل.</td>
-                        <td dir="ltr"><code>nmap -O target.com</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-Pn</code></td>
-                        <td>تخطي اختبار الاستكشاف (يُستخدم إذا كان الهدف لا يستجيب للبنج).</td>
-                        <td dir="ltr"><code>nmap -Pn target.com</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>--script [اسم السكريبت]</code></td>
-                        <td>تشغيل سكريبتات <span dir="ltr">NSE</span> محددة.</td>
-                        <td dir="ltr"><code>nmap --script http-enum target.com</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>-oX [ملف.xml]</code></td>
-                        <td>حفظ النتائج بصيغة <span dir="ltr">XML</span>.</td>
-                        <td dir="ltr"><code>nmap -sV -oX results.xml target.com</code></td>
-                    </tr>
-                </tbody>
-            </table>
-        </section>
+            <div class="tool-card">
+                <h3>2. الاكتشاف الشامل (-A)</h3>
+                <p>يجمع بين اكتشاف نظام التشغيل، فحص إصدارات الخدمات، واستخدام سكربتات أساسية متقدمة.</p>
+                
+                <div class="code-block">
+                    nmap <span>-A 10.10.10.5</span>
+                </div>
+            </div>
 
-        <section id="resources">
-            <h2>مزيد من المصادر</h2>
-            <p>لتعلم المزيد عن Nmap واستخداماتها، يمكنك الاطلاع على الوثائق الرسمية والمصادر التعليمية الأخرى.<a href="https://nmap.org/">هنا موقع الاداه</a></p>
-       
+            <div class="tool-card">
+                <h3>3. فحص السكربتات الافتراضية</h3>
+                <p>تشغيل مجموعة من السكربتات المدمجة للبحث عن نقاط ضعف شائعة أو معلومات إضافية.</p>
+                
+                <div class="code-block">
+                    nmap <span>-sC -p- target_ip</span>
+                </div>
+                <p class="note">ملاحظة: الرمز <span style="font-family: monospace;">-p-</span> يعني فحص جميع المنافذ (من 1 إلى 65535).</p>
+            </div>
+            
+            <div id="hydra" class="tool-card">
+                <h3>Hydra - هجمات القوة الغاشمة</h3>
+                <p>لتكسير كلمات المرور عبر بروتوكولات الشبكة المختلفة.</p>
+                <div class="code-block">
+                    hydra <span>-L users.txt -P passwords.txt ssh://target_ip</span>
+                </div>
+            </div>
 
-        </section>
-
+        </main>
+        
     </div>
 
 </body>
 </html>
+
 
